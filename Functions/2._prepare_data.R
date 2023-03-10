@@ -23,8 +23,7 @@ raw_data1 <-
   dplyr::arrange(id_number) %>% 
   dplyr::filter(
     !duplicated(id_number)
-    ) %>% 
-
+    )
 
 
 
