@@ -1,0 +1,191 @@
+---
+title: "Sample STI Data"
+author: "Cornelius Tanui"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    social: menu
+    vertical_layout: scroll
+    source_code: https://github.com/corneliustanui/Sample_STI_Data.git
+    theme: lumen
+date: "`r Sys.Date()`"
+runtime: shiny
+---
+
+
+```{=html}
+<style>
+.navbar {
+background-color:#438D80;
+border-color: #15317E;
+}
+.navbar-brand {
+color: #000000! important;
+}
+.section.sidebar {
+background-color:#438D80;
+border-color: #15317E;
+color: #000000! important;
+}
+</style>
+```
+
+
+```{r Clear Evrironment, include = FALSE}
+gc()
+graphics.off()
+rm(list = ls(all.names = TRUE))
+```
+
+
+```{r Functions, include = FALSE}
+
+# load functions
+
+source("./Functions/0._load_packages.R")
+source("./Functions/1._load_data.R")
+source("./Functions/2._prepare_data.R")
+source("./Functions/3._server.R")
+source("./Functions/4._ui.R")
+```
+
+
+```{r Function Args, include = FALSE}
+link_to_gd <- "https://docs.google.com/spreadsheets/d/1GrcDHTyX_xoCUH_3E-xn6zfxWdSM8PgU/edit?usp=share_link&ouid=109816320875943770961&rtpof=true&sd=true"
+folder <- "./Raw Data/"
+filename <- "STI Data.xls"
+
+```
+
+
+```{r Load Data, include = FALSE}
+
+# load raw data
+Clean_STI_Data <- 
+  readr::read_csv("./Clean Data/Clean STI Data.csv",
+                  show_col_types = FALSE)
+
+```
+
+
+Sidebar {.sidebar}
+=====================================
+
+```{r}
+
+shiny::selectInput(
+  inputId = "case_status",
+  label = "STI Status",
+  choices = c(unique(Clean_STI_Data$case_status), ""),
+  selected = ""
+)
+
+shiny::selectInput(
+  inputId = "sex",
+  label = "Gender of participant",
+  choices = c(unique(Clean_STI_Data$sex), ""),
+  selected = ""
+)
+
+shiny::selectInput(
+  inputId = "marital_status",
+  label = "Marital Status",
+  choices = c(unique(Clean_STI_Data$marital_status), ""),
+  selected = ""
+)
+
+shiny::selectInput(
+  inputId = "variable",
+  label = "Variable",
+  choices = c("case_status", "occupation", "church", "level_of_education", "marital_status", "used_condom", "taken_alcohol", "age_first_sex", ""),
+  selected = ""
+)
+
+selectInput("n_breaks", label = "Number of bins:",
+              choices = c(0, 10, 20, 35, 50), selected = 0)
+
+
+
+
+```
+
+
+Page 1
+=====================================  
+
+Row {.tabset .tabset-fade}
+-------------------------------------
+
+### Data
+    
+```{r Table}
+
+DT::renderDataTable(
+  {
+    DT::datatable(
+       Clean_STI_Data %>% 
+          dplyr::filter(
+            Clean_STI_Data$case_status == input$case_status & 
+            Clean_STI_Data$sex == input$sex & 
+            Clean_STI_Data$marital_status == input$marital_status
+            ), 
+       filter = "top",
+       rownames = FALSE,
+       selection = "single",
+       extensions = "Buttons",
+       options = list(
+         pageLength = 15, 
+         autoWidth = TRUE, 
+         # dom = "tB", 
+         dom = "Bfrtip", 
+         buttons = c("copy", "csv", "excel", "pdf", "print")
+         )
+     )
+   }
+ )
+
+
+```
+
+### Chart 1
+    
+```{r Chart 1}
+
+renderPlot({
+  Clean_STI_Data %>% 
+    ggplot2::ggplot(aes(x = weight, color = input$sex, fill = input$sex)) + 
+    ggplot2::geom_histogram()+
+    ggplot2::stat_bin(binwidth = as.numeric(input$n_breaks)) + 
+    ggplot2::facet_wrap(~ input$variable)
+    
+})
+
+```
+
+### Chart 2
+    
+```{r Chart 2}
+
+
+```
+   
+Page 2
+=====================================   
+
+Row {.tabset .tabset-fade}
+-------------------------------------
+
+### Chart 1
+    
+```{r}
+```
+
+### Chart 2
+    
+```{r}
+```
+
+### Chart 3
+    
+```{r}
+```
