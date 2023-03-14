@@ -5,10 +5,10 @@ account: corneliuskiplimo
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 8546375
-bundleId: 6949279
+bundleId: 6956002
 url: https://corneliuskiplimo.shinyapps.io/SampleSTIData_v1/
-when: 1678655494.10882
-lastSyncTime: 1678655494.10886
+when: 1678792316.53375
+lastSyncTime: 1678792316.53377
 asMultiple: TRUE
 asStatic: FALSE
 ignoredFiles: Sample STI Data.Rmd
